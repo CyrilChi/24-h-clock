@@ -25,22 +25,60 @@
     }
 
     function drawScene() {
-      // main drawScene function
-      clear(); // clear canvas
-
-      // draw 扇形
-      ctx.moveTo(clockRadius, clockRadius);
-      ctx.arc(clockRadius, clockRadius, 150, (Math.PI * 3) / 12, (Math.PI * 12) / 12, false);
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(0,0,0,0.1)';
-      ctx.fill();
-      // draw 日出日落
+      // 日出时间计算
       let sunrise = calcnew(1, 39.9, 116.4, 2022, 9, 9);
       let sunset = calcnew(2, 39.9, 116.4, 2022, 9, 9);
       let sunriseHoures = sunrise.getHours();
       let sunriseMinutes = sunrise.getMinutes();
       let sunsetHoures = sunset.getHours();
       let sunsetMinutes = sunset.getMinutes();
+      // main drawScene function
+      clear(); // clear canvas
+
+      // draw 日出扇形
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(clockRadius, clockRadius);
+      ctx.arc(
+        clockRadius,
+        clockRadius,
+        150,
+        (Math.PI * (sunriseHoures + sunriseMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunsetHoures + sunsetMinutes / 60 - 6)) / 12,
+        false
+      );
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(152,174,183,0.2)';
+      ctx.fill();
+      ctx.restore();
+
+      // draw 日落扇形
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(clockRadius, clockRadius);
+      ctx.arc(
+        clockRadius,
+        clockRadius,
+        150,
+        (Math.PI * (sunsetHoures + sunsetMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunriseHoures + sunriseMinutes / 60 - 6)) / 12,
+        false
+      );
+      ctx.closePath();
+      let linearGradient1 = ctx.createLinearGradient(0, 700, 0, 0);
+      linearGradient1.addColorStop(0, 'white');
+      linearGradient1.addColorStop(1, 'black');
+      ctx.fillStyle = linearGradient1;
+      ctx.fill();
+      ctx.restore();
+
+      // draw 工作时间扇形
+      ctx.beginPath();
+      ctx.moveTo(clockRadius, clockRadius);
+      ctx.arc(clockRadius, clockRadius, 140, (Math.PI * 3) / 12, (Math.PI * 12) / 12, false);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(110,222,244,0.3)';
+      ctx.fill();
 
       // get current time
       var date = new Date();
