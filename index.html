@@ -48,7 +48,10 @@
         false
       );
       ctx.closePath();
-      ctx.fillStyle = 'rgba(152,174,183,0.2)';
+      let linearGradient2 = ctx.createLinearGradient(0, 0, 0, 500);
+      linearGradient2.addColorStop(0, 'rgba(152,174,183,0.5)');
+      linearGradient2.addColorStop(1, 'rgba(152,174,183,0.01)');
+      ctx.fillStyle = linearGradient2;
       ctx.fill();
       ctx.restore();
 
@@ -65,9 +68,9 @@
         false
       );
       ctx.closePath();
-      let linearGradient1 = ctx.createLinearGradient(0, 700, 0, 0);
+      let linearGradient1 = ctx.createLinearGradient(0, 400, 0, 0);
       linearGradient1.addColorStop(0, 'white');
-      linearGradient1.addColorStop(1, 'black');
+      linearGradient1.addColorStop(1, 'rgba(0,0,0,0.9)');
       ctx.fillStyle = linearGradient1;
       ctx.fill();
       ctx.restore();
