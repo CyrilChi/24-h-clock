@@ -14,7 +14,7 @@
   </body>
   <script type="module">
     import { InitTime, SunTime } from './timeClass.js';
-    var canvas, ctx, clockRadius;
+    var canvas, ctx, clockRadius, ratio;
     $(function () {
       init();
     });
@@ -23,6 +23,10 @@
       clockRadius = 250; // 中心点、半径
       canvas = document.getElementById('canvas');
       ctx = canvas.getContext('2d');
+      ratio = (window.devicePixelRatio || 1) * 2; // 用于兼容高清屏
+      canvas.width = canvas.width * ratio;
+      canvas.height = canvas.height * ratio;
+      ctx.scale(ratio, ratio);
       setInterval(drawScene, 1000); // loop drawScene
     }
     // draw functions :
@@ -92,7 +96,7 @@
 
       // draw clock background
       ctx.save();
-      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.translate(canvas.width / (2 * ratio), canvas.height / (2 * ratio));
 
       //时针刻度
       ctx.save();
