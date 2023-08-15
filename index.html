@@ -12,12 +12,19 @@
       <canvas id="canvas" width="500" height="500"></canvas>
     </div>
   </body>
-
-  <script>
-    var canvas, ctx;
-    var clockRadius = 250; // 中心点、半径
-    var clockImage;
-
+  <script type="module">
+    import { InitTime, SunTime } from './timeClass.js';
+    var canvas, ctx, clockRadius;
+    $(function () {
+      init();
+    });
+    // initialization
+    function init() {
+      clockRadius = 250; // 中心点、半径
+      canvas = document.getElementById('canvas');
+      ctx = canvas.getContext('2d');
+      setInterval(drawScene, 1000); // loop drawScene
+    }
     // draw functions :
     function clear() {
       // clear canvas function
@@ -25,13 +32,13 @@
     }
 
     function drawScene() {
-      // 日出时间计算
-      let sunrise = calcnew(1, 39.9, 116.4, 2022, 9, 9);
-      let sunset = calcnew(2, 39.9, 116.4, 2022, 9, 9);
-      let sunriseHoures = sunrise.getHours();
-      let sunriseMinutes = sunrise.getMinutes();
-      let sunsetHoures = sunset.getHours();
-      let sunsetMinutes = sunset.getMinutes();
+      var T = new InitTime(new Date());
+      var nowTime = T.getCurrentTime();
+      var S = new SunTime(nowTime);
+      var sunTime = S.getSunTime();
+      // save current context
+      $('#dataText').text(`${nowTime.y}年${nowTime.m}月${nowTime.d}日 周${nowTime.w}`);
+
       // main drawScene function
       clear(); // clear canvas
 
@@ -43,8 +50,8 @@
         clockRadius,
         clockRadius,
         150,
-        (Math.PI * (sunriseHoures + sunriseMinutes / 60 - 6)) / 12,
-        (Math.PI * (sunsetHoures + sunsetMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime.sunriseHours + sunTime.sunriseMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime.sunsetHours + sunTime.sunsetMinutes / 60 - 6)) / 12,
         false
       );
       ctx.closePath();
@@ -63,8 +70,8 @@
         clockRadius,
         clockRadius,
         150,
-        (Math.PI * (sunsetHoures + sunsetMinutes / 60 - 6)) / 12,
-        (Math.PI * (sunriseHoures + sunriseMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime.sunsetHours + sunTime.sunsetMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime.sunriseHours + sunTime.sunriseMinutes / 60 - 6)) / 12,
         false
       );
       ctx.closePath();
@@ -83,34 +90,48 @@
       ctx.fillStyle = 'rgba(110,222,244,0.3)';
       ctx.fill();
 
-      // get current time
-      var date = new Date();
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      let week = date.getDay();
-      var hours = date.getHours();
-      var minutes = date.getMinutes();
-      var seconds = date.getSeconds();
-      var hour = hours + minutes / 60;
-      var minute = minutes + seconds / 60;
-      $('#dataText').text(`${year}年${month}月${day}日 周${week}`);
-      // save current context
+      // draw clock background
       ctx.save();
-      // draw clock image (as background)
       ctx.translate(canvas.width / 2, canvas.height / 2);
+
+      //时针刻度
+      ctx.save();
+      for (var i = 0; i < 12; i++) {
+        ctx.beginPath();
+        ctx.rotate((30 * Math.PI) / 180);
+        ctx.moveTo(0, clockRadius * 0.78);
+        ctx.lineTo(0, clockRadius * 0.82);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      //分针刻度
+      ctx.save();
+      ctx.lineWidth = 4;
+      for (var i = 0; i < 60; i++) {
+        if (i % 5 != 0) {
+          ctx.beginPath();
+          ctx.moveTo(0, clockRadius * 0.8);
+          ctx.lineTo(0, clockRadius * 0.8 + 1);
+          ctx.stroke();
+        }
+        ctx.rotate((6 * Math.PI) / 180);
+      }
+      ctx.restore();
       ctx.beginPath();
       // draw numbers
       ctx.fillStyle = '#000';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      // hour
       for (var n = 1; n <= 24; n++) {
         ctx.font = '20px Arial';
         var theta = ((n - 6) * (Math.PI * 2)) / 24;
-        var x = clockRadius * 0.75 * Math.cos(theta);
-        var y = clockRadius * 0.75 * Math.sin(theta);
+        var x = clockRadius * 0.65 * Math.cos(theta);
+        var y = clockRadius * 0.65 * Math.sin(theta);
         ctx.fillText(n, x, y);
       }
+      // minute
       for (var n = 1; n <= 60; n++) {
         ctx.font = '36px Arial';
         if (n % 5 == 0) {
@@ -122,7 +143,7 @@
       }
       // draw seconds
       ctx.save();
-      var theta = ((seconds - 15) * 2 * Math.PI) / 60;
+      var theta = ((nowTime.s - 15) * 2 * Math.PI) / 60;
       ctx.rotate(theta);
       ctx.beginPath();
       ctx.moveTo(-15, -5);
@@ -134,7 +155,7 @@
       ctx.restore();
       // draw minutes
       ctx.save();
-      var theta = ((minute - 15) * 2 * Math.PI) / 60;
+      var theta = ((nowTime.mm - 15) * 2 * Math.PI) / 60;
       ctx.rotate(theta);
       ctx.beginPath();
       ctx.moveTo(-15, -5);
@@ -145,7 +166,7 @@
       ctx.restore();
       // draw hour
       ctx.save();
-      var theta = ((hour - 6) * 2 * Math.PI) / 24;
+      var theta = ((nowTime.hs - 6) * 2 * Math.PI) / 24;
       ctx.rotate(theta);
       ctx.beginPath();
       ctx.moveTo(-15, -5);
@@ -157,15 +178,6 @@
 
       ctx.restore();
     }
-
-    // initialization
-    $(function () {
-      canvas = document.getElementById('canvas');
-      ctx = canvas.getContext('2d');
-      clockImage = new Image();
-      clockImage.src = 'https://static.runoob.com/images/mix/125855_nnla_89964.png';
-      setInterval(drawScene, 1000); // loop drawScene
-    });
   </script>
   <style>
     * {
