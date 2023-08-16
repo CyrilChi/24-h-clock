@@ -53,7 +53,7 @@
       ctx.arc(
         clockRadius,
         clockRadius,
-        150,
+        clockRadius * 0.6,
         (Math.PI * (sunTime.sunriseHours + sunTime.sunriseMinutes / 60 - 6)) / 12,
         (Math.PI * (sunTime.sunsetHours + sunTime.sunsetMinutes / 60 - 6)) / 12,
         false
@@ -73,7 +73,7 @@
       ctx.arc(
         clockRadius,
         clockRadius,
-        150,
+        clockRadius * 0.6,
         (Math.PI * (sunTime.sunsetHours + sunTime.sunsetMinutes / 60 - 6)) / 12,
         (Math.PI * (sunTime.sunriseHours + sunTime.sunriseMinutes / 60 - 6)) / 12,
         false
@@ -89,7 +89,7 @@
       // draw 工作时间扇形
       ctx.beginPath();
       ctx.moveTo(clockRadius, clockRadius);
-      ctx.arc(clockRadius, clockRadius, 140, (Math.PI * 3) / 12, (Math.PI * 12) / 12, false);
+      ctx.arc(clockRadius, clockRadius, clockRadius * 0.58, (Math.PI * 3) / 12, (Math.PI * 12) / 12, false);
       ctx.closePath();
       ctx.fillStyle = 'rgba(110,222,244,0.3)';
       ctx.fill();
@@ -186,16 +186,15 @@
   <style>
     * {
       width: 100%;
+      margin: 0;
     }
     .clocks {
-      width: 900px;
-      height: 900px;
       margin: 25px auto;
       position: relative;
       text-align: center;
     }
     .clocks-date-text {
-      font-size: 60px;
+      font-size: 50px;
     }
   </style>
 </html>
