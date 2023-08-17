@@ -2,8 +2,8 @@
  * @Author: CyrilChi chiyongmail@163.com
  * @Date: 2023-08-15 11:27:30
  * @LastEditors: CyrilChi chiyongmail@163.com
- * @LastEditTime: 2023-08-15 13:57:19
- * @FilePath: /24-h-clock/index.js
+ * @LastEditTime: 2023-08-17 13:28:21
+ * @FilePath: /24-h-clock/timeClass.js
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -22,18 +22,13 @@ export class InitTime {
     const seconds = this.time.getSeconds();
     const hour = hours + minutes / 60;
     const minute = minutes + seconds / 60;
-    console.log({ y: year, m: month, d: day, w: week, hs: hours, ms: minutes, h: hour, mm: minute, s: seconds });
     return { y: year, m: month, d: day, w: week, hs: hours, ms: minutes, h: hour, mm: minute, s: seconds };
   }
-}
-export class SunTime {
-  constructor(time) {
-    this.time = time;
-  }
+
   getSunTime() {
     // 日出时间计算
-    let sunrise = calcnew(1, 39.9, 116.4, this.time.y, this.time.m, this.time.d);
-    let sunset = calcnew(2, 39.9, 116.4, this.time.y, this.time.m, this.time.d);
+    let sunrise = calcnew(1, 39.9, 116.4, this.getCurrentTime().y, this.getCurrentTime().m, this.getCurrentTime().d);
+    let sunset = calcnew(2, 39.9, 116.4, this.getCurrentTime().y, this.getCurrentTime().m, this.getCurrentTime().d);
     let sunriseHours = sunrise.getHours();
     let sunriseMinutes = sunrise.getMinutes();
     let sunsetHours = sunset.getHours();

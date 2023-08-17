@@ -13,7 +13,7 @@
     </div>
   </body>
   <script type="module">
-    import { InitTime, SunTime } from './timeClass.js';
+    import { InitTime } from './timeClass.js';
     var canvas, ctx, clockRadius, ratio;
     $(function () {
       init();
@@ -36,10 +36,14 @@
     }
 
     function drawScene() {
-      var T = new InitTime(new Date());
+      let t = new Date();
+      var T = new InitTime(t);
       var nowTime = T.getCurrentTime();
-      var S = new SunTime(nowTime);
-      var sunTime = S.getSunTime();
+      var sunTime = T.getSunTime();
+      // n 天前时间
+      let nDaysAgo = 7;
+      var T2 = new InitTime(new Date(t.setDate(t.getDate() - nDaysAgo)));
+      var sunTime2 = T2.getSunTime();
       // save current context
       $('#dataText').text(`${nowTime.y}年${nowTime.m}月${nowTime.d}日 周${nowTime.w}`);
 
@@ -82,6 +86,46 @@
       let linearGradient1 = ctx.createLinearGradient(0, 400, 0, 0);
       linearGradient1.addColorStop(0, 'white');
       linearGradient1.addColorStop(1, 'rgba(0,0,0,0.9)');
+      ctx.fillStyle = linearGradient1;
+      ctx.fill();
+      ctx.restore();
+
+      // draw n 天前 日出扇形
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(clockRadius, clockRadius);
+      ctx.arc(
+        clockRadius,
+        clockRadius,
+        clockRadius * 0.58,
+        (Math.PI * (sunTime2.sunriseHours + sunTime2.sunriseMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime2.sunsetHours + sunTime2.sunsetMinutes / 60 - 6)) / 12,
+        false
+      );
+      ctx.closePath();
+      let linearGradient4 = ctx.createLinearGradient(0, 0, 0, 500);
+      linearGradient2.addColorStop(0, 'rgba(152,174,183,0.4)');
+      linearGradient2.addColorStop(1, 'rgba(152,174,183,0.01)');
+      ctx.fillStyle = linearGradient2;
+      ctx.fill();
+      ctx.restore();
+
+      // draw n 天前日落扇形
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(clockRadius, clockRadius);
+      ctx.arc(
+        clockRadius,
+        clockRadius,
+        clockRadius * 0.58,
+        (Math.PI * (sunTime2.sunsetHours + sunTime2.sunsetMinutes / 60 - 6)) / 12,
+        (Math.PI * (sunTime2.sunriseHours + sunTime2.sunriseMinutes / 60 - 6)) / 12,
+        false
+      );
+      ctx.closePath();
+      let linearGradient3 = ctx.createLinearGradient(0, 400, 0, 0);
+      linearGradient1.addColorStop(0, 'white');
+      linearGradient1.addColorStop(1, 'rgba(0,0,0,0.8)');
       ctx.fillStyle = linearGradient1;
       ctx.fill();
       ctx.restore();
